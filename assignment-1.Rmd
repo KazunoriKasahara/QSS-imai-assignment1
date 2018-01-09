@@ -1,0 +1,58 @@
+---
+title: "POLS/CS&SS 501: Assignment 1"
+author: "Your Name"
+output: html_document
+---
+
+<!-- knitr options -->
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Setup
+
+Load any R packages, define any common packages.
+
+These solutions use the **tidyverse** packages, and data for *QSS* included in the
+**qss** R package.
+<!-- message=FALSE suppresses the verbose messages printed when some packages are loaded -->
+```{r message=FALSE}
+library("tidyverse")
+library("qss")
+```
+
+
+# Exercise 1
+
+Load the `turnout` dataset from the **qss** package.
+```{r}
+data("Kenya", package = "qss")
+data("Sweden", package = "qss")
+data("World", package = "qss")
+```
+
+
+Write answer here
+
+
+# Exercise 2
+
+Load the necessary datasets from the **qss** package.
+```{r}
+data("Kenya", package = "qss")
+data("Sweden", package = "qss")
+data("World", package = "qss")
+```
+
+
+Write answer here
+
+# Exercise 3
+
+Load the `leaders` dataset from the **qss** package.
+```{r}
+data("leaders", package = "qss")
+```
+
+
+Write answer here
