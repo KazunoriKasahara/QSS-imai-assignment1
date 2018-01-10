@@ -21,6 +21,11 @@ library("tidyverse")
 library("qss")
 ```
 
+If it is not already installed, install **qss** using:
+```{r eval=FALSE}
+devtools::install_github("kosukeimai/qss")
+```
+
 
 # Exercise 1
 
@@ -53,6 +58,5 @@ Load the `leaders` dataset from the **qss** package.
 ```{r}
 data("leaders", package = "qss")
 ```
-
 
 Write answer here
