@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Setup
 
+
 Load any R packages, define any common packages.
 
 These solutions use the **tidyverse** packages, and data for *QSS* included in the
@@ -23,7 +24,7 @@ library("qss")
 
 If it is not already installed, install **qss** using:
 ```{r eval=FALSE}
-devtools::install_github("kosukeimai/qss")
+devtools::install_github("kosukeimai/qss-package")
 ```
 
 
