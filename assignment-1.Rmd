@@ -29,11 +29,11 @@ devtools::install_github("kosukeimai/qss")
 
 # Exercise 1
 
+QSS Exercise 1.5.1 - Bias in Self-Reported Turnout
+
 Load the `turnout` dataset from the **qss** package.
 ```{r}
-data("Kenya", package = "qss")
-data("Sweden", package = "qss")
-data("World", package = "qss")
+data("turnout", package = "qss")
 ```
 
 
@@ -41,6 +41,8 @@ Write answer here
 
 
 # Exercise 2
+
+QSS Exercise 1.5.2 - Understanding World Population Dynamics
 
 Load the necessary datasets from the **qss** package.
 ```{r}
@@ -53,6 +55,8 @@ data("World", package = "qss")
 Write answer here
 
 # Exercise 3
+
+QSS Exercise 2.8.3 - Success of Leader Assassination as a Natural Experiment
 
 Load the `leaders` dataset from the **qss** package.
 ```{r}
