@@ -36,9 +36,68 @@ Load the `turnout` dataset from the **qss** package.
 ```{r}
 data("turnout", package = "qss")
 ```
+1.
+```{r}
+Dimension <- dim(turnout)
+Observaton <-nrow(turnout)
+Range <- range(turnout$year)
+```
+2.
+```{r}
+turnout$rate_VAP <- turnout$total*100/(turnout$VAP + turnout$overseas)
+turnout$rate_VEP <- turnout$total*100/turnout$VEP
+## The turnout rate using the VEP is bigger than the turnout using the VAP
+```
 
+3.
+```{r}
+turnout$dif_VEP_ANES <- turnout$ANES - turnout$rate_VEP
+mean_dif_VEP_ANES <- mean(turnout$dif_VEP_ANES)
+range_dif_VEP_ANES <- range(turnout$dif_VEP_ANES)
 
-Write answer here
+turnout$dif_VAP_ANES <- turnout$ANES - turnout$rate_VAP
+mean_dif_VAP_ANES <- mean(turnout$dif_VAP_ANES)
+range_dif_VAP_ANES <- range(turnout$dif_VAP_ANES)
+
+## Both the VEP turnout and the VAP turnout rate are smaller than ANES one. The differece of the VAP turnout rate with the ANES one is bigger than that of VEP.
+
+```
+4.
+mid 82 by 4 
+pre 80 by 4
+```{r}
+library(dplyr)
+dif_VEP_ANES_mid <- turnout %>% 
+  filter(year %in% seq(1982,2002,4)) %>%
+  select(year,dif_VEP_ANES)
+
+dif_VEP_ANES_president <- turnout %>% 
+  filter(year %in% seq(1980,2008,4)) %>%
+  select(year,dif_VEP_ANES)
+  
+```
+5.
+```{r}
+dif_VEP_ANES_period1 <- turnout %>%
+  head(7) %>%
+  select(year,dif_VEP_ANES)
+
+dif_VEP_ANES_period2 <- turnout %>%
+  tail(7) %>%
+  select(year,dif_VEP_ANES)
+
+#The bias of ANES has not increased over time.
+```
+
+6.
+```{r}
+turnout_2008 <- filter(turnout,year == 2008)
+VAP_adjust_2008 <- turnout_2008$VAP - turnout_2008$felons - turnout_2008$osvoters - turnout_2008$noncit
+rate_VAP_adjust_2008 <- (turnout_2008$total - turnout_2008$overseas)*100/VAP_adjust_2008
+
+## The adjusted VAP turnout rate is bigger than the unjusted VAP one and a bit smaller than the VEP one. The adjustment makes VAP closer to ANES turnout rate.
+```
+
 
 
 # Exercise 2
@@ -50,10 +109,80 @@ Load the necessary datasets from the **qss** package.
 data("Kenya", package = "qss")
 data("Sweden", package = "qss")
 data("World", package = "qss")
+
+##1
+CBR <- function(data){
+  a <- filter(data,period == "1950-1955")
+  b <- filter(data,period == "2005-2010")
+  aa <- sum(a$births)/(sum(a$py.men) + sum(a$py.women))
+  bb <- sum(b$births)/(sum(b$py.men) + sum(b$py.women))
+  return(c(aa,bb))
+}
+CBR_Kenya <- CBR(Kenya)
+CBR_Sweden <- CBR(Sweden)
+CBR_World <- CBR(World)
+## CBR decreases over time.
+
+##2
+ASFR <- function (data){
+  a <- filter(data,period == "1950-1955") %>% mutate(ASFR = births/py.women)
+  b <- filter(data,period == "2005-2010") %>% mutate(ASFR = births/py.women)
+  data <- rbind(a,b)
+  return(data)
+}
+Kenya = ASFR(Kenya)
+Sweden = ASFR(Sweden)
+World = ASFR(World)
+
+## Women in Kenya and Sweden gives the most birth in their 20's.
+
+##3
+TFR <- function(data){
+  a <- filter(data,period == "1950-1955")
+  b <- filter(data,period == "2005-2010")
+  aa <- 5*sum(a$ASFR)
+  bb <- 5*sum(b$ASFR)
+  return(list(aa,bb))
+}
+
+TFR_Kenya = TFR(Kenya)
+TFR_Sweden = TFR(Sweden)
+TFR_World = TFR (World)
+
+##4
+CDR <- function(data){
+  a <- filter(data,period == "1950-1955")
+  b <- filter(data,period == "2005-2010")
+  aa <- sum(a$deaths)/(sum(a$py.men) + sum(a$py.women))
+  bb <- sum(b$deaths)/(sum(b$py.men) + sum(b$py.women))
+  return(c(aa,bb))
+}
+CDR_Kenya <- CDR(Kenya)
+CDR_Sweden <- CDR(Sweden)
+CDR_World <- CDR(World)
+#CDRs in all the regions have decreased over time. The drop is unremarkable im particular in Kenya compared with Sweden.
+
+##5
+ASDR <- function (data){
+  a <- filter(data,period == "1950-1955") %>% mutate(ASDR = deaths/(py.women + py.men))
+  b <- filter(data,period == "2005-2010") %>% mutate(ASDR = deaths/(py.women + py.men))
+  data <- rbind(a,b)
+  return(data)
+}
+Kenya = ASDR(Kenya)
+Sweden = ASDR(Sweden)
+World = ASDR(World)
+
+## ASDRs of Sweden for each age are smaller than that of Kenya, but ASDRs of Sweden for the old is bigger than that of Kenya for the young.
+
+##6
+Sweden$proportion = (Sweden$py.men + Sweden$py.women)/(sum(Sweden$py.men) +sum(Sweden$py.women))
+CDR_Kenya_cf = sum(filter(Kenya,period == "2005-2010")$ASDR*filter(Sweden, period == "2005-2010")$proportion)
+
+##If Kenya had the same population propotion as Sweden,CDR of Kenya would be significantly bigger than that of Sweden.
 ```
 
 
-Write answer here
 
 # Exercise 3
 
@@ -62,6 +191,38 @@ QSS Exercise 2.8.3 - Success of Leader Assassination as a Natural Experiment
 Load the `leaders` dataset from the **qss** package.
 ```{r}
 data("leaders", package = "qss")
+
+##1
+observation <- nrow(leaders)
+num_country <-length(unique(leaders$country))
+avg_per_year <- observation/(max(leaders$year)-min(leaders$year)+1)
+
+##2
+leaders$success = ifelse(leaders$result %in% c("dies within a day after the attack","dies between a day and a week","dies, timing unknown","dies between a week and a month"), 1, 0)
+successrate = sum(leaders$success)/observation
+
+##3
+polity_before_success = mean(filter(leaders,success == 1)$politybefore)
+polity_before_fail = mean(filter(leaders,success == 0)$politybefore)
+age_success = c(mean(filter(leaders,success == 1)$age),median(filter(leaders,success == 1)$age))
+age_fail = c(mean(filter(leaders,success == 0)$age),median(filter(leaders,success == 0)$age))
+##Polity scores before attenpts are lower for failed attempts than for successful ones.Also,the age of leaders tend to be smaller for failed attempts than for successful ones. These significant differences can imply the success of assignations is not determined randomly.
+
+##4
+leaders$warbefore = ifelse(leaders$interwarbefore == 1 |leaders$civilwarbefore ==1, 1, 0)
+warbefore_success = mean(filter(leaders,success == 1)$warbefore)
+warbefore_fail = mean(filter(leaders,success == 0)$warbefore)
+##It seems that the difference about experience of wars between successful attempts and failed ones is not significant.
+
+##5
+## My assumption befoer annalyzing is that succesful leadres assignations do not cause democratization but lead to wars.
+polityafter_success = mean(filter(leaders,success == 1)$polityafter)
+polityafter_fail = mean(filter(leaders,success == 0)$polityafter)
+leaders$warafter = ifelse(leaders$interwarafter == 1 |leaders$civilwarafter ==1, 1, 0)
+warafter_success = mean(filter(leaders,success == 1)$warafter)
+warafter_fail = mean(filter(leaders,success == 0)$warafter)
+
+## Polity scores after attempts are higher for the successful cases than for the failed ones.Also,wars less often happen after successful attempts than after failed attempts. Thus,contrary to my assumption, successful leader assignations can cause democratization and would not lead to wars compared with failed ones.  
 ```
 
 Write answer here
